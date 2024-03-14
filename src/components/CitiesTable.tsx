@@ -8,22 +8,19 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  Typography,
 } from "@mui/material";
 import { type CSSProperties, useMemo, useState } from "react";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as List } from "react-window";
 import { City } from "../utils/city";
+import { blue } from "@mui/material/colors";
 
 const StyledTableCell = styled(TableCell)`
-  color: white;
-  background-color: #333;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: ${blue[800]};
   font-weight: 600;
-  opacity: 0.9;
 `;
-
-interface CitiesTableProps {
-  cities: City[];
-}
 
 function CityRow({
   index,
@@ -59,9 +56,17 @@ function CityRow({
 
 const ROW_HEIGHT = 53;
 
-// TODO: getPaginatedCities(cities, page, perPage): cities
+function getPaginatedCities(cities: City[], page: number, perPage: number) {
+  const startIndexOfCitiesForDisplay = page * perPage;
+  const endIndexOfCitiesForDisplay = startIndexOfCitiesForDisplay + perPage;
 
-export function CitiesTable({ cities }: CitiesTableProps) {
+  return cities?.slice(
+    startIndexOfCitiesForDisplay,
+    endIndexOfCitiesForDisplay
+  );
+}
+
+export function CitiesTable({ cities }: { cities: City[] }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -72,26 +77,13 @@ export function CitiesTable({ cities }: CitiesTableProps) {
     setPage(0);
   }
 
-  const citiesForDisplay = useMemo(() => {
-    const startIndexOfCitiesForDisplay = page * rowsPerPage;
-    const endIndexOfCitiesForDisplay =
-      startIndexOfCitiesForDisplay + rowsPerPage;
-
-    return cities?.slice(
-      startIndexOfCitiesForDisplay,
-      endIndexOfCitiesForDisplay
-    );
-  }, [cities, page, rowsPerPage]);
+  const paginatedCities = useMemo(
+    () => getPaginatedCities(cities, page, rowsPerPage),
+    [cities, page, rowsPerPage]
+  );
 
   return (
-    <div
-      style={{
-        flexGrow: 1,
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden",
-      }}
-    >
+    <Paper elevation={4}>
       <TableContainer component={Paper}>
         <Table
           component="div"
@@ -114,36 +106,39 @@ export function CitiesTable({ cities }: CitiesTableProps) {
           </TableHead>
           <TableBody
             component="div"
-            style={{
+            sx={{
+              position: "relative",
               height: ROW_HEIGHT * 10,
               width: "100%",
             }}
           >
-            {citiesForDisplay.length > 0 ? (
+            {paginatedCities.length > 0 ? (
               <AutoSizer>
                 {({ height, width }: { height: number; width: number }) => (
                   <List
                     height={height}
                     width={width}
-                    itemCount={citiesForDisplay.length}
+                    itemCount={paginatedCities.length}
                     itemSize={ROW_HEIGHT}
                     itemKey={(index, data) => data[index].name}
-                    itemData={citiesForDisplay}
+                    itemData={paginatedCities}
                   >
                     {CityRow}
                   </List>
                 )}
               </AutoSizer>
             ) : (
-              <TableRow component="div">
-                <TableCell
-                  component="div"
-                  colSpan={3}
-                  sx={{ textAlign: "center" }}
-                >
-                  There are no results for the search input
-                </TableCell>
-              </TableRow>
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <NoResultsFallback />
+              </div>
             )}
           </TableBody>
         </Table>
@@ -157,6 +152,14 @@ export function CitiesTable({ cities }: CitiesTableProps) {
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-    </div>
+    </Paper>
+  );
+}
+
+function NoResultsFallback() {
+  return (
+    <Typography variant="body1">
+      There are no results for the search input.
+    </Typography>
   );
 }

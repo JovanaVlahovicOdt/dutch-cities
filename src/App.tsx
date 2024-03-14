@@ -4,6 +4,27 @@ import citiesData from "./resources/nl.json";
 import { CitiesTable } from "./components/CitiesTable";
 import { useDebouncedValue } from "./utils/useDebouncedValue";
 import { type City, findCitiesByName } from "./utils/city";
+import styled from "@emotion/styled";
+
+const Page = styled("div")`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 1280px;
+  margin: 0 auto;
+`;
+
+const Header = styled("header")`
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+`;
+
+const Main = styled("main")`
+  padding: 1rem;
+`;
 
 const cities: City[] = citiesData.map((city) => ({
   name: city.city,
@@ -21,24 +42,8 @@ function App() {
   );
 
   return (
-    <div
-      style={{
-        height: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        flexDirection: "column",
-        overflow: "hidden",
-      }}
-    >
-      <header
-        style={{
-          flexShrink: 0,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "1rem",
-        }}
-      >
+    <Page>
+      <Header>
         <Typography variant="h4" component="h1">
           Find Dutch City
         </Typography>
@@ -49,20 +54,12 @@ function App() {
           value={search}
           onChange={(event) => setSearch(event.target.value)}
         />
-      </header>
+      </Header>
 
-      <main
-        style={{
-          padding: "1rem",
-          display: "flex",
-          flexDirection: "column",
-          flexGrow: 1,
-          overflow: "hidden",
-        }}
-      >
+      <Main>
         <CitiesTable cities={citiesToRender} />
-      </main>
-    </div>
+      </Main>
+    </Page>
   );
 }
 

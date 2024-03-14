@@ -9,7 +9,9 @@ import {
   TablePagination,
   TableRow,
 } from "@mui/material";
-import { useMemo, useState } from "react";
+import { type CSSProperties, useMemo, useState } from "react";
+import AutoSizer from "react-virtualized-auto-sizer";
+import { FixedSizeList as List } from "react-window";
 import { City } from "../utils/city";
 
 const StyledTableCell = styled(TableCell)`
@@ -22,6 +24,40 @@ const StyledTableCell = styled(TableCell)`
 interface CitiesTableProps {
   cities: City[];
 }
+
+function CityRow({
+  index,
+  data,
+  style,
+}: {
+  index: number;
+  data: City[];
+  style: CSSProperties;
+}) {
+  const city = data[index];
+  return (
+    <TableRow
+      component="div"
+      style={{ ...style }}
+      sx={{
+        display: "flex",
+        "&:last-child div, &:last-child div": { border: 0 },
+      }}
+    >
+      <TableCell sx={{ flex: 1 }} component="div" scope="row">
+        {city.name}
+      </TableCell>
+      <TableCell sx={{ flex: 1 }} component="div" scope="row">
+        {city.province}
+      </TableCell>
+      <TableCell sx={{ flex: 1 }} component="div" align="right">
+        {city.population}
+      </TableCell>
+    </TableRow>
+  );
+}
+
+const ROW_HEIGHT = 53;
 
 // TODO: getPaginatedCities(cities, page, perPage): cities
 
@@ -56,36 +92,55 @@ export function CitiesTable({ cities }: CitiesTableProps) {
         overflow: "hidden",
       }}
     >
-      <TableContainer component={Paper} style={{ overflow: "auto" }}>
-        <Table aria-label="cities" sx={{ tableLayout: "fixed" }} stickyHeader>
-          <TableHead>
-            <TableRow>
-              <StyledTableCell align="left">Name</StyledTableCell>
-              <StyledTableCell align="left">Province</StyledTableCell>
-              <StyledTableCell align="right">Population</StyledTableCell>
+      <TableContainer component={Paper}>
+        <Table
+          component="div"
+          aria-label="cities"
+          sx={{ tableLayout: "fixed" }}
+          stickyHeader
+        >
+          <TableHead component="div">
+            <TableRow component="div">
+              <StyledTableCell component="div" align="left">
+                Name
+              </StyledTableCell>
+              <StyledTableCell component="div" align="left">
+                Province
+              </StyledTableCell>
+              <StyledTableCell component="div" align="right">
+                Population
+              </StyledTableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
+          <TableBody
+            component="div"
+            style={{
+              height: ROW_HEIGHT * 10,
+              width: "100%",
+            }}
+          >
             {citiesForDisplay.length > 0 ? (
-              citiesForDisplay.map((city: City) => (
-                <TableRow
-                  key={city.name}
-                  sx={{
-                    "&:last-child td, &:last-child th": { border: 0 },
-                  }}
-                >
-                  <TableCell component="th" scope="row">
-                    {city.name}
-                  </TableCell>
-                  <TableCell component="th" scope="row">
-                    {city.province}
-                  </TableCell>
-                  <TableCell align="right">{city.population}</TableCell>
-                </TableRow>
-              ))
+              <AutoSizer>
+                {({ height, width }: { height: number; width: number }) => (
+                  <List
+                    height={height}
+                    width={width}
+                    itemCount={citiesForDisplay.length}
+                    itemSize={ROW_HEIGHT}
+                    itemKey={(index, data) => data[index].name}
+                    itemData={citiesForDisplay}
+                  >
+                    {CityRow}
+                  </List>
+                )}
+              </AutoSizer>
             ) : (
-              <TableRow>
-                <TableCell colSpan={3} sx={{ textAlign: "center" }}>
+              <TableRow component="div">
+                <TableCell
+                  component="div"
+                  colSpan={3}
+                  sx={{ textAlign: "center" }}
+                >
                   There are no results for the search input
                 </TableCell>
               </TableRow>

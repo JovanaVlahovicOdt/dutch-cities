@@ -84,7 +84,7 @@ export function CitiesTable({ cities }: { cities: City[] }) {
 
   return (
     <Paper elevation={4}>
-      <TableContainer component={Paper}>
+      <TableContainer component="div">
         <Table
           component="div"
           aria-label="cities"

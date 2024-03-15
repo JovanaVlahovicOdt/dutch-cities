@@ -18,6 +18,10 @@ export function getPaginatedCities(
   const startIndexOfCitiesForDisplay = page * perPage;
   const endIndexOfCitiesForDisplay = startIndexOfCitiesForDisplay + perPage;
 
+  if (cities?.length < perPage) {
+    return cities;
+  }
+
   return cities?.slice(
     startIndexOfCitiesForDisplay,
     endIndexOfCitiesForDisplay

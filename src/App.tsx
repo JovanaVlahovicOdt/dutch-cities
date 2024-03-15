@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import { TextField, Typography } from "@mui/material";
 import citiesData from "./resources/nl.json";
-import { CitiesTable } from "./components/CitiesTable";
 import { useDebouncedValue } from "./utils/useDebouncedValue";
 import { type City, findCitiesByName } from "./utils/city";
 import { styled } from "@mui/material/styles";
+import { CitiesTable } from "./components/citiesTable/CitiesTable";
 
 const Page = styled("div")`
   display: flex;

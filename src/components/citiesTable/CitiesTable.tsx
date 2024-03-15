@@ -10,11 +10,12 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { type CSSProperties, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as List } from "react-window";
-import { City } from "../utils/city";
+import { City, getPaginatedCities } from "../../utils/city";
 import { blue } from "@mui/material/colors";
+import { CityRow } from "./CityRow";
 
 const StyledTableCell = styled(TableCell)`
   color: rgba(255, 255, 255, 0.87);
@@ -22,49 +23,7 @@ const StyledTableCell = styled(TableCell)`
   font-weight: 600;
 `;
 
-function CityRow({
-  index,
-  data,
-  style,
-}: {
-  index: number;
-  data: City[];
-  style: CSSProperties;
-}) {
-  const city = data[index];
-  return (
-    <TableRow
-      component="div"
-      style={{ ...style }}
-      sx={{
-        display: "flex",
-        "&:last-child div, &:last-child div": { border: 0 },
-      }}
-    >
-      <TableCell sx={{ flex: 1 }} component="div" scope="row">
-        {city.name}
-      </TableCell>
-      <TableCell sx={{ flex: 1 }} component="div" scope="row">
-        {city.province}
-      </TableCell>
-      <TableCell sx={{ flex: 1 }} component="div" align="right">
-        {city.population}
-      </TableCell>
-    </TableRow>
-  );
-}
-
 const ROW_HEIGHT = 53;
-
-function getPaginatedCities(cities: City[], page: number, perPage: number) {
-  const startIndexOfCitiesForDisplay = page * perPage;
-  const endIndexOfCitiesForDisplay = startIndexOfCitiesForDisplay + perPage;
-
-  return cities?.slice(
-    startIndexOfCitiesForDisplay,
-    endIndexOfCitiesForDisplay
-  );
-}
 
 export function CitiesTable({ cities }: { cities: City[] }) {
   const [page, setPage] = useState(0);

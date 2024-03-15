@@ -10,7 +10,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as List } from "react-window";
 import { City, getPaginatedCities } from "../../utils/city";
@@ -40,6 +40,8 @@ export function CitiesTable({ cities }: { cities: City[] }) {
     () => getPaginatedCities(cities, page, rowsPerPage),
     [cities, page, rowsPerPage]
   );
+
+  useEffect(() => setPage(0), [cities]);
 
   return (
     <Paper elevation={4}>

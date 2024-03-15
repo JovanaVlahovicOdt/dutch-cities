@@ -106,7 +106,7 @@ export function CitiesTable({ cities }: { cities: City[] }) {
         sx={{ flexShrink: 0 }}
         component="div"
         count={cities?.length}
-        page={page}
+        page={paginatedCities?.length > 0 ? page : 0}
         onPageChange={(_, newPage) => setPage(newPage)}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleChangeRowsPerPage}
